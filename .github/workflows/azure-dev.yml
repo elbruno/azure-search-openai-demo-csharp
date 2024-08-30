@@ -56,33 +56,6 @@ jobs:
         run: |
           echo 'Reason: ${{ github.event.inputs.reason }}'
 
-      - name: 'Print environment variables'
-        run: |
-          echo "AZURE_CLIENT_ID: $Env:AZURE_CLIENT_ID"
-          echo "AZURE_TENANT_ID: $Env:AZURE_TENANT_ID"
-          echo "AZURE_SUBSCRIPTION_ID: $Env:AZURE_SUBSCRIPTION_ID"
-          echo "AZURE_CREDENTIALS: $Env:AZURE_CREDENTIALS"
-          echo "AZURE_RESOURCE_GROUP: $Env:AZURE_RESOURCE_GROUP"
-          echo "AZURE_DEV_USER_AGENT: $Env:AZURE_DEV_USER_AGENT"
-          echo "AZURE_APP_SERVICE_SKU: $Env:AZURE_APP_SERVICE_SKU"
-          echo "AZURE_OPENAI_SERVICE: $Env:AZURE_OPENAI_SERVICE"
-          echo "AZURE_OPENAI_RESOURCE_GROUP: $Env:AZURE_OPENAI_RESOURCE_GROUP"
-          echo "AZURE_FORMRECOGNIZER_SERVICE: $Env:AZURE_FORMRECOGNIZER_SERVICE"
-          echo "AZURE_FORMRECOGNIZER_RESOURCE_GROUP: $Env:AZURE_FORMRECOGNIZER_RESOURCE_GROUP"
-          echo "AZURE_SEARCH_SERVICE: $Env:AZURE_SEARCH_SERVICE"
-          echo "AZURE_SEARCH_SERVICE_RESOURCE_GROUP: $Env:AZURE_SEARCH_SERVICE_RESOURCE_GROUP"
-          echo "AZURE_SEARCH_SERVICE_SKU: $Env:AZURE_SEARCH_SERVICE_SKU"
-          echo "AZURE_STORAGE_ACCOUNT: $Env:AZURE_STORAGE_ACCOUNT"
-          echo "AZURE_STORAGE_RESOURCE_GROUP: $Env:AZURE_STORAGE_RESOURCE_GROUP"
-          echo "AZURE_KEY_VAULT_NAME: $Env:AZURE_KEY_VAULT_NAME"
-          echo "AZURE_KEY_VAULT_RESOURCE_GROUP: $Env:AZURE_KEY_VAULT_RESOURCE_GROUP"
-          echo "AZURE_REDIS_CACHE: $Env:AZURE_REDIS_CACHE"
-          echo "AZURE_REDIS_CACHE_RESOURCE_GROUP: $Env:AZURE_REDIS_CACHE_RESOURCE_GROUP"
-          echo "AZURE_PRINCIPAL_TYPE: $Env:AZURE_PRINCIPAL_TYPE"
-          echo "dotEnvString: $Env:dotEnvString"
-        shell: pwsh
-  
-
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
