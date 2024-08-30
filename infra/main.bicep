@@ -169,7 +169,7 @@ param webImageName string = ''
 param useAOAI bool
 
 @description('OpenAI API Key, leave empty to provision a new Azure OpenAI instance')
-param openAIApiKey string
+param openAIApiKey string = ''
 
 @description('OpenAI Model')
 param openAiChatGptDeployment string
