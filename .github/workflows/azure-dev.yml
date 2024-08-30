@@ -86,21 +86,28 @@ jobs:
         shell: pwsh
         env:
           AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+
       - name: create azure-search-csharp env
         run: |
           azd env new azure-search-csharp
+        env:
+          AZURE_ENV_NAME: azure-search-csharp
 
       - name: write each variable from .env using azd env set
         run: |
           $envs = $Env:dotEnvString -split "\n"
           foreach ($env in $envs) {
-            echo $env
-            $keyValue = $env -split "="
-            $keyName = $keyValue[0]
-
-            # keyvalue will be the second element without quotes
-            $keyValue = $keyValue[1].Trim('"')
-            azd env set $keyName $keyValue
+            if (-not [string]::IsNullOrEmpty($env)) {
+              echo $env
+              $keyValue = $env -split "="
+              if ($keyValue.Length -eq 2) {
+                $keyName = $keyValue[0]
+                $keyValue = $keyValue[1].Trim('"')
+                azd env set $keyName $keyValue
+              } else {
+                Write-Host "Skipping invalid environment variable: $env"
+              }
+            }
           }
 
           # cat .env
