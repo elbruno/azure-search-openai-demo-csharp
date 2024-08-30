@@ -86,6 +86,12 @@ jobs:
         env:
           AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
 
+      - name: 'Set default location to EASTUS'
+        run: |
+          echo "Set default location to EASTUS"
+          azd config set defaults.location eastus            
+        shell: pwsh
+
       - name: create azure-search-csharp env
         run: |
           azd env new azure-search-csharp
@@ -116,7 +122,9 @@ jobs:
           dotEnvString: ${{ secrets.DOTENVSTRING }}
 
       - name: Provision Infrastructure
-        run: azd provision --no-prompt --debug
+        run: |
+          echo "Start provisioning infrastructure for $Env:AZURE_ENV_NAME"
+          azd provision --no-prompt --debug
         env:
           AZURE_ENV_NAME: ${{ vars.AZURE_ENV_NAME }}
           AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
@@ -129,3 +137,10 @@ jobs:
           AZURE_ENV_NAME: ${{ vars.AZURE_ENV_NAME }}
           AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
           AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      # - name: Deploy Application
+      #   run: azd down --no-prompt --debug
+      #   env:
+      #     AZURE_ENV_NAME: ${{ vars.AZURE_ENV_NAME }}
+      #     AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
+      #     AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
