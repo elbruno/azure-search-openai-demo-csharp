@@ -4,6 +4,7 @@ using Azure.Core;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
 using Microsoft.SemanticKernel.Embeddings;
+using OpenAI;
 
 namespace MinimalApi.Services;
 #pragma warning disable SKEXP0011 // Mark members as static
@@ -45,6 +46,7 @@ public class ReadRetrieveReadChatService
             {
                 var endpoint = configuration["AzureOpenAiServiceEndpoint"];
                 ArgumentNullException.ThrowIfNullOrWhiteSpace(endpoint);
+
                 kernelBuilder = kernelBuilder.AddAzureOpenAITextEmbeddingGeneration(embeddingModelName, endpoint, tokenCredential ?? new DefaultAzureCredential());
                 kernelBuilder = kernelBuilder.AddAzureOpenAIChatCompletion(deployedModelName, endpoint, tokenCredential ?? new DefaultAzureCredential());
             }
@@ -110,7 +112,7 @@ standard plan AND dental AND employee benefit.
         }
         else
         {
-            documentContents = string.Join("\r", documentContentList.Select(x =>$"{x.Title}:{x.Content}"));
+            documentContents = string.Join("\r", documentContentList.Select(x => $"{x.Title}:{x.Content}"));
         }
 
         // step 2.5
@@ -140,7 +142,7 @@ standard plan AND dental AND employee benefit.
             }
         }
 
-        
+
         if (images != null)
         {
             var prompt = @$"## Source ##

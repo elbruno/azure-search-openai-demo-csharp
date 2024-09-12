@@ -1,5 +1,8 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
+using MudBlazor.Utilities;
+using OpenAI;
+
 namespace MinimalApi.Extensions;
 
 internal static class WebApplicationExtensions
@@ -42,30 +45,50 @@ internal static class WebApplicationExtensions
         IConfiguration config,
         [EnumeratorCancellation] CancellationToken cancellationToken)
     {
-        var deploymentId = config["AZURE_OPENAI_CHATGPT_DEPLOYMENT"];
-        var response = await client.GetChatCompletionsStreamingAsync(
-            new ChatCompletionsOptions
-            {
-                DeploymentName = deploymentId,
-                Messages =
-                {
-                    new ChatRequestSystemMessage("""
+
+        var systemMessage = """
                         You're an AI assistant for developers, helping them write code more efficiently.
                         You're name is **Blazor 📎 Clippy** and you're an expert Blazor developer.
                         You're also an expert in ASP.NET Core, C#, TypeScript, and even JavaScript.
                         You will always reply with a Markdown formatted response.
-                        """),
-                    new ChatRequestUserMessage("What's your name?"),
-                    new ChatRequestAssistantMessage("Hi, my name is **Blazor 📎 Clippy**! Nice to meet you."),
-                    new ChatRequestUserMessage(prompt.Prompt)
-                }
-            }, cancellationToken);
+                        """;
+
+        var deploymentId = config["AZURE_OPENAI_CHATGPT_DEPLOYMENT"];
+
+        // changes triggered using the latest version of Semantic Kernel
+        var chatClient = client.GetChatClient(deploymentId);
+
+        var messages = new List<OpenAI.Chat.ChatMessage>
+        {
+            new OpenAI.Chat.SystemChatMessage(systemMessage),
+            new OpenAI.Chat.UserChatMessage("What's your name?"),
+            new OpenAI.Chat.AssistantChatMessage("Hi, my name is **Blazor 📎 Clippy**! Nice to meet you."),
+            new OpenAI.Chat.UserChatMessage(prompt.Prompt)
+        };
+
+        var response = chatClient.CompleteChatStreamingAsync(messages);
+
+        // TODO: remove original code
+        //var response = await client.GetChatCompletionsStreamingAsync(
+        //    new ChatCompletionsOptions
+        //    {
+        //        DeploymentName = deploymentId,
+        //        Messages =
+        //        {
+        //            new ChatRequestSystemMessage(systemMessage),
+        //            new ChatRequestUserMessage("What's your name?"),
+        //            new ChatRequestAssistantMessage("Hi, my name is **Blazor 📎 Clippy**! Nice to meet you."),
+        //            new ChatRequestUserMessage(prompt.Prompt)
+        //        }
+        //    }, cancellationToken);
 
         await foreach (var choice in response.WithCancellation(cancellationToken))
         {
-            if (choice.ContentUpdate is { Length: > 0 })
+            var messagesCount = choice.ContentUpdate.Count();
+
+            if (choice.ContentUpdate is { Count: > 0 })
             {
-                yield return new ChatChunkResponse(choice.ContentUpdate.Length, choice.ContentUpdate);
+                yield return new ChatChunkResponse(choice.ContentUpdate.Count, choice.ContentUpdate[0].Text);
             }
         }
     }
@@ -146,14 +169,25 @@ internal static class WebApplicationExtensions
         IConfiguration config,
         CancellationToken cancellationToken)
     {
-        var result = await client.GetImageGenerationsAsync(new ImageGenerationOptions
-        {
-            Prompt = prompt.Prompt,
-        },
-        cancellationToken);
+        // changes triggered using the latest version of Semantic Kernel
+        var imagesClient = client.GetImageClient(model: "dall-e");
+        var result = await imagesClient.GenerateImagesAsync(
+            prompt: prompt.Prompt,
+            imageCount: 1,
+            cancellationToken: cancellationToken);
 
-        var imageUrls = result.Value.Data.Select(i => i.Url).ToList();
+        var imageUrls = result.Value.Select(i => i.ImageUri).ToList();
         var response = new ImageResponse(result.Value.Created, imageUrls);
+
+        // TODO: remove original code
+        //var result = await client.GetImageGenerationsAsync(new ImageGenerationOptions
+        //{
+        //    Prompt = prompt.Prompt,
+        //    DeploymentName = ""
+        //},
+        //cancellationToken);
+        //var imageUrls = result.Value.Data.Select(i => i.Url).ToList();
+        //var response = new ImageResponse(result.Value.Created, imageUrls);
 
         return TypedResults.Ok(response);
     }

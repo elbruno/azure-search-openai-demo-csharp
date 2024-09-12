@@ -18,7 +18,7 @@
       "value": "${AZURE_FORMRECOGNIZER_SERVICE}"
     },
     "formRecognizerSkuName": {
-      "value": "${AZURE_FORMRECOGNIZER_SERVICE_SKU=S0}"
+      "value": "${AZURE_FORMRECOGNIZER_SERVICE_SKU=F0}"
     },
     "keyVaultName": {
       "value": "${AZURE_KEY_VAULT_NAME}"
@@ -60,10 +60,10 @@
       "value": "${AZURE_SEARCH_SERVICE_RESOURCE_GROUP}"
     },
     "searchServiceSkuName": {
-      "value": "${AZURE_SEARCH_SERVICE_SKU=standard}"
+      "value": "${AZURE_SEARCH_SERVICE_SKU=free}"
     },
     "searchServiceSemanticRankerLevel": {
-      "value": "${AZURE_SEARCH_SEMANTIC_RANKER=free}"
+      "value": "${AZURE_SEARCH_SEMANTIC_RANKER=disabled}"
     },
     "storageAccountName": {
       "value": "${AZURE_STORAGE_ACCOUNT}"
@@ -108,7 +108,7 @@
       "value": "${AZURE_OPENAI_CHATGPT_MODEL_NAME=gpt-4o-mini}"
     },
     "azureOpenAIChatGptDeploymentCapacity": {
-      "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT_CAPACITY=8}"
+      "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT_CAPACITY=30}"
     }
   }
 }

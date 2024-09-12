@@ -4,7 +4,11 @@ using Microsoft.AspNetCore.Antiforgery;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Configuration.ConfigureAzureKeyVault();
+// on dev scenarios, we use the info from the appsettings.development.json
+var azureKeyVaultEndpoint = builder.Configuration["AZURE_KEY_VAULT_ENDPOINT"];
+var tenantId = builder.Configuration["AZURE_TENANT_ID"];
+
+builder.Configuration.ConfigureAzureKeyVault(azureKeyVaultEndpoint, tenantId);
 
 // See: https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -13,7 +17,7 @@ builder.Services.AddOutputCache();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddCrossOriginResourceSharing();
-builder.Services.AddAzureServices();
+builder.Services.AddAzureServices(tenantId);
 builder.Services.AddAntiforgery(options => { options.HeaderName = "X-CSRF-TOKEN-HEADER"; options.FormFieldName = "X-CSRF-TOKEN-FORM"; });
 builder.Services.AddHttpClient();
 
@@ -50,9 +54,7 @@ else
         options.Configuration = $"""
             {name},abortConnect=false,ssl={ssl},allowAdmin=true,password={key}
             """;
-        options.InstanceName = "content";
-
-        
+        options.InstanceName = "content";        
     });
 
     // set application telemetry

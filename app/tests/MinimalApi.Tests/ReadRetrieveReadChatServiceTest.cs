@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using MinimalApi.Services;
 using NSubstitute;
+using OpenAI;
 using Shared.Models;
 
 namespace MinimalApi.Tests;
@@ -34,7 +35,7 @@ public class ReadRetrieveReadChatServiceTest
                 });
 
         var openAIEndpoint = Environment.GetEnvironmentVariable("AZURE_OPENAI_ENDPOINT") ?? throw new InvalidOperationException();
-        var openAIClient = new OpenAIClient(new Uri(openAIEndpoint), new DefaultAzureCredential());
+        var openAIClient = new AzureOpenAIClient(new Uri(openAIEndpoint), new DefaultAzureCredential());
         var openAiEmbeddingDeployment = Environment.GetEnvironmentVariable("AZURE_OPENAI_EMBEDDING_DEPLOYMENT") ?? throw new InvalidOperationException();
         var openAIChatGptDeployment = Environment.GetEnvironmentVariable("AZURE_OPENAI_CHATGPT_DEPLOYMENT") ?? throw new InvalidOperationException();
 

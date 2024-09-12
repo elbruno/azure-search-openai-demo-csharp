@@ -13,6 +13,7 @@ using Azure.Search.Documents.Models;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Microsoft.Extensions.Logging;
+using OpenAI;
 using Shared.Models;
 
 public sealed partial class AzureSearchEmbedService(
@@ -449,8 +450,16 @@ public sealed partial class AzureSearchEmbedService(
         var batch = new IndexDocumentsBatch<SearchDocument>();
         foreach (var section in sections)
         {
-            var embeddings = await openAIClient.GetEmbeddingsAsync(new Azure.AI.OpenAI.EmbeddingsOptions(embeddingModelName, [section.Content.Replace('\r', ' ')]));
-            var embedding = embeddings.Value.Data.FirstOrDefault()?.Embedding.ToArray() ?? [];
+            // changes triggered using the latest version of Semantic Kernel
+            var client = openAIClient.GetEmbeddingClient(embeddingModelName);
+            var options = new OpenAI.Embeddings.EmbeddingGenerationOptions();
+            var embeddings = await client.GenerateEmbeddingsAsync([section.Content.Replace('\r', ' ')]);
+            var embedding = embeddings.Value.FirstOrDefault()?.Vector.ToArray() ?? [];
+
+            // TODO: remove original code
+            //var embeddings = await openAIClient.GetEmbeddingsAsync(new Azure.AI.OpenAI.EmbeddingsOptions(embeddingModelName, [section.Content.Replace('\r', ' ')]));
+            // var embedding = embeddings.Value.Data.FirstOrDefault()?.Embedding.ToArray() ?? [];
+
             batch.Actions.Add(new IndexDocumentsAction<SearchDocument>(
                 IndexActionType.MergeOrUpload,
                 new SearchDocument

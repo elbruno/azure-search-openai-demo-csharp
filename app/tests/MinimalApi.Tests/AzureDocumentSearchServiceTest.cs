@@ -10,7 +10,9 @@ using Azure.Identity;
 using Azure.Search.Documents;
 using FluentAssertions;
 using MinimalApi.Services;
+using OpenAI;
 using Shared.Models;
+using static System.Collections.Specialized.BitVector32;
 
 namespace MinimalApi.Tests;
 public class AzureDocumentSearchServiceTest
@@ -44,10 +46,20 @@ public class AzureDocumentSearchServiceTest
         var searchServceEndpoint = Environment.GetEnvironmentVariable("AZURE_SEARCH_SERVICE_ENDPOINT") ?? throw new InvalidOperationException();
         var openAiEndpoint = Environment.GetEnvironmentVariable("AZURE_OPENAI_ENDPOINT") ?? throw new InvalidOperationException();
         var openAiEmbeddingDeployment = Environment.GetEnvironmentVariable("AZURE_OPENAI_EMBEDDING_DEPLOYMENT") ?? throw new InvalidOperationException();
-        var openAIClient = new OpenAIClient(new Uri(openAiEndpoint), new DefaultAzureCredential());
+        var openAIClient = new AzureOpenAIClient(new Uri(openAiEndpoint), new DefaultAzureCredential());
         var query = "What is included in my Northwind Health Plus plan that is not in standard?";
-        var embeddingResponse = await openAIClient.GetEmbeddingsAsync(new EmbeddingsOptions(openAiEmbeddingDeployment, [query]));
-        var embedding = embeddingResponse.Value.Data.First().Embedding;
+
+        // changes triggered using the latest version of Semantic Kernel
+        var client = openAIClient.GetEmbeddingClient(openAiEmbeddingDeployment);
+        var options = new OpenAI.Embeddings.EmbeddingGenerationOptions();
+        var embeddings = await client.GenerateEmbeddingsAsync([query]);
+        var embedding = embeddings.Value.FirstOrDefault()?.Vector.ToArray() ?? [];
+
+        // TODO: Remove original code
+        //var embeddingResponse = await openAIClient.GetEmbeddingsAsync(new EmbeddingsOptions(openAiEmbeddingDeployment, [query]));
+        //var embedding = embeddingResponse.Value.Data.First().Embedding;
+
+
         var searchClient = new SearchClient(new Uri(searchServceEndpoint), index, new DefaultAzureCredential());
         var service = new AzureSearchService(searchClient);
 

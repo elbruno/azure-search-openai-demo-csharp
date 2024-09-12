@@ -1,5 +1,8 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
+using System.ClientModel;
+using OpenAI;
+
 internal static partial class Program
 {
     private static BlobContainerClient? s_corpusContainerClient;
@@ -176,11 +179,17 @@ internal static partial class Program
                }
                else
                {
+                   // new code with the latest Azure SDK and Semantic Kernel SDK
                    var endpoint = o.AzureOpenAIServiceEndpoint;
                    ArgumentNullException.ThrowIfNullOrEmpty(endpoint);
-                   s_openAIClient = new OpenAIClient(
+                   s_openAIClient = new AzureOpenAIClient(
                        new Uri(endpoint),
-                       DefaultCredential);
+                       new DefaultAzureCredential());
+
+                   // TODO: remove original code
+                   //s_openAIClient = new OpenAIClient(
+                   //    new Uri(endpoint),
+                   //    DefaultCredential);
                }
            }
            await Task.CompletedTask;

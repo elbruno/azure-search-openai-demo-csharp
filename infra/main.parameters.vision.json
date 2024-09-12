@@ -93,7 +93,7 @@
       "value": "${AZURE_COMPUTERVISION_SERVICE_NAME}"
     },
     "useVision": {
-      "value": "${USE_VISION=false}"
+      "value": "${USE_VISION=true}"
     },
     "openAiChatGptDeployment": {
       "value": "${OPENAI_CHATGPT_DEPLOYMENT=gpt-4o-mini}"
@@ -108,7 +108,7 @@
       "value": "${AZURE_OPENAI_CHATGPT_MODEL_NAME=gpt-4o-mini}"
     },
     "azureOpenAIChatGptDeploymentCapacity": {
-      "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT_CAPACITY=8}"
+      "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT_CAPACITY=30}"
     }
   }
 }

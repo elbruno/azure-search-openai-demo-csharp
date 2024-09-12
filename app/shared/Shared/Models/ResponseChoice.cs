@@ -44,8 +44,8 @@ public record ResponseChoice(
     [property: JsonPropertyName("context")] ResponseContext Context,
     [property: JsonPropertyName("citationBaseUrl")] string CitationBaseUrl)
 {
-    [JsonPropertyName("content_filter_results")]
-    public ContentFilterResult? ContentFilterResult { get; set; }
+    //[JsonPropertyName("content_filter_results")]
+    //public ContentFilterResult? ContentFilterResult { get; set; }
 
 }
 

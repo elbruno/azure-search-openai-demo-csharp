@@ -39,7 +39,7 @@ param applicationInsightsName string = ''
 @description('Name of the Azure App Service Plan')
 param appServicePlanName string = ''
 
-@description('Capacity of the chat GPT deployment. Default: 10')
+@description('Capacity of the chat GPT deployment. Default: 8')
 param chatGptDeploymentCapacity int = 8
 
 @description('Name of the chat GPT deployment')
@@ -52,7 +52,7 @@ param computerVisionServiceName string = ''
 param computerVisionResourceGroupName string = ''
 
 @description('Location of the resource group for the Azure Cognitive Services Computer Vision service')
-param computerVisionResourceGroupLocation string = 'eastus' // Vision vectorize API is yet to be deployed globally
+param computerVisionResourceGroupLocation string = 'eastus'
 
 @description('SKU name for the Azure Cognitive Services Computer Vision service. Default: S1')
 param computerVisionSkuName string = 'S1'

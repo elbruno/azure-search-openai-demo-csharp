@@ -1,13 +1,28 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
+using OpenAI;
+
 namespace MinimalApi.Extensions;
 
 internal static class ServiceCollectionExtensions
 {
-    private static readonly DefaultAzureCredential s_azureCredential = new();
+    //private static readonly DefaultAzureCredential s_azureCredential = new();
 
-    internal static IServiceCollection AddAzureServices(this IServiceCollection services)
+    internal static IServiceCollection AddAzureServices(this IServiceCollection services, string? tenantId = null)
     {
+        // by def we use a default azure credential
+        var s_azureCredential = new DefaultAzureCredential();
+
+        if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == Environments.Development)
+        {
+            // on dev scenarios, we use the info from the appsettings.development.json
+            var da = new DefaultAzureCredentialOptions
+            {
+                TenantId = tenantId
+            };
+            s_azureCredential = new DefaultAzureCredential(da);
+        }
+
         services.AddSingleton<BlobServiceClient>(sp =>
         {
             var config = sp.GetRequiredService<IConfiguration>();
@@ -61,7 +76,7 @@ internal static class ServiceCollectionExtensions
                 var azureOpenAiServiceEndpoint = config["AzureOpenAiServiceEndpoint"];
                 ArgumentNullException.ThrowIfNullOrEmpty(azureOpenAiServiceEndpoint);
 
-                var openAIClient = new OpenAIClient(new Uri(azureOpenAiServiceEndpoint), s_azureCredential);
+                var openAIClient = new AzureOpenAIClient(new Uri(azureOpenAiServiceEndpoint), s_azureCredential);
 
                 return openAIClient;
             }
