@@ -4,9 +4,12 @@ namespace MinimalApi.Extensions;
 
 internal static class KeyVaultConfigurationBuilderExtensions
 {
-
-    internal static IConfigurationBuilder ConfigureAzureKeyVault(this IConfigurationBuilder builder, string? azureKeyVaultEndpoint = null, string? tenantId = null)
+    internal static WebApplicationBuilder ConfigureAzureKeyVault(this WebApplicationBuilder builder)
     {
+
+        var azureKeyVaultEndpoint = builder.Configuration["AZURE_KEY_VAULT_ENDPOINT"];
+        var tenantId = builder.Configuration["AZURE_TENANT_ID"];
+
         // validate local development environment
         if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") != Environments.Development)
         {
@@ -25,7 +28,8 @@ internal static class KeyVaultConfigurationBuilderExtensions
             azureCredential = new DefaultAzureCredential(defaultAzureCredentialOptions);
         }
 
-        builder.AddAzureKeyVault(new Uri(azureKeyVaultEndpoint), azureCredential);
+        builder.Configuration.AddAzureKeyVault(new Uri(azureKeyVaultEndpoint), azureCredential);
+
 
         return builder;
     }

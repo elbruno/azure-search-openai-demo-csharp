@@ -6,15 +6,16 @@ namespace MinimalApi.Extensions;
 
 internal static class ServiceCollectionExtensions
 {
-    //private static readonly DefaultAzureCredential s_azureCredential = new();
-
-    internal static IServiceCollection AddAzureServices(this IServiceCollection services, string? tenantId = null)
+    internal static WebApplicationBuilder AddAzureServices(this WebApplicationBuilder builder)
     {
         // by def we use a default azure credential
         var s_azureCredential = new DefaultAzureCredential();
 
         if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == Environments.Development)
         {
+            var azureKeyVaultEndpoint = builder.Configuration["AZURE_KEY_VAULT_ENDPOINT"];
+            var tenantId = builder.Configuration["AZURE_TENANT_ID"];
+
             // on dev scenarios, we use the info from the appsettings.development.json
             var da = new DefaultAzureCredentialOptions
             {
@@ -23,7 +24,7 @@ internal static class ServiceCollectionExtensions
             s_azureCredential = new DefaultAzureCredential(da);
         }
 
-        services.AddSingleton<BlobServiceClient>(sp =>
+        builder.Services.AddSingleton<BlobServiceClient>(sp =>
         {
             var config = sp.GetRequiredService<IConfiguration>();
             var azureStorageAccountEndpoint = config["AzureStorageAccountEndpoint"];
@@ -35,14 +36,14 @@ internal static class ServiceCollectionExtensions
             return blobServiceClient;
         });
 
-        services.AddSingleton<BlobContainerClient>(sp =>
+        builder.Services.AddSingleton<BlobContainerClient>(sp =>
         {
             var config = sp.GetRequiredService<IConfiguration>();
             var azureStorageContainer = config["AzureStorageContainer"];
             return sp.GetRequiredService<BlobServiceClient>().GetBlobContainerClient(azureStorageContainer);
         });
 
-        services.AddSingleton<ISearchService, AzureSearchService>(sp =>
+        builder.Services.AddSingleton<ISearchService, AzureSearchService>(sp =>
         {
             var config = sp.GetRequiredService<IConfiguration>();
             var azureSearchServiceEndpoint = config["AzureSearchServiceEndpoint"];
@@ -57,7 +58,7 @@ internal static class ServiceCollectionExtensions
             return new AzureSearchService(searchClient);
         });
 
-        services.AddSingleton<DocumentAnalysisClient>(sp =>
+        builder.Services.AddSingleton<DocumentAnalysisClient>(sp =>
         {
             var config = sp.GetRequiredService<IConfiguration>();
             var azureOpenAiServiceEndpoint = config["AzureOpenAiServiceEndpoint"] ?? throw new ArgumentNullException();
@@ -67,7 +68,7 @@ internal static class ServiceCollectionExtensions
             return documentAnalysisClient;
         });
 
-        services.AddSingleton<OpenAIClient>(sp =>
+        builder.Services.AddSingleton<OpenAIClient>(sp =>
         {
             var config = sp.GetRequiredService<IConfiguration>();
             var useAOAI = config["UseAOAI"] == "true";
@@ -90,8 +91,8 @@ internal static class ServiceCollectionExtensions
             }
         });
 
-        services.AddSingleton<AzureBlobStorageService>();
-        services.AddSingleton<ReadRetrieveReadChatService>(sp =>
+        builder.Services.AddSingleton<AzureBlobStorageService>();
+        builder.Services.AddSingleton<ReadRetrieveReadChatService>(sp =>
         {
             var config = sp.GetRequiredService<IConfiguration>();
             var useVision = config["UseVision"] == "true";
@@ -102,7 +103,7 @@ internal static class ServiceCollectionExtensions
                 var azureComputerVisionServiceEndpoint = config["AzureComputerVisionServiceEndpoint"];
                 ArgumentNullException.ThrowIfNullOrEmpty(azureComputerVisionServiceEndpoint);
                 var httpClient = sp.GetRequiredService<IHttpClientFactory>().CreateClient();
-                
+
                 var visionService = new AzureComputerVisionService(httpClient, azureComputerVisionServiceEndpoint, s_azureCredential);
                 return new ReadRetrieveReadChatService(searchClient, openAIClient, config, visionService, s_azureCredential);
             }
@@ -112,7 +113,7 @@ internal static class ServiceCollectionExtensions
             }
         });
 
-        return services;
+        return builder;
     }
 
     internal static IServiceCollection AddCrossOriginResourceSharing(this IServiceCollection services)
