@@ -55,11 +55,6 @@ public class AzureDocumentSearchServiceTest
         var embeddings = await client.GenerateEmbeddingsAsync([query]);
         var embedding = embeddings.Value.FirstOrDefault()?.Vector.ToArray() ?? [];
 
-        // TODO: Remove original code
-        //var embeddingResponse = await openAIClient.GetEmbeddingsAsync(new EmbeddingsOptions(openAiEmbeddingDeployment, [query]));
-        //var embedding = embeddingResponse.Value.Data.First().Embedding;
-
-
         var searchClient = new SearchClient(new Uri(searchServceEndpoint), index, new DefaultAzureCredential());
         var service = new AzureSearchService(searchClient);
 

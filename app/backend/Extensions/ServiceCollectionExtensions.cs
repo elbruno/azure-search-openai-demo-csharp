@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
 using OpenAI;
+using Shared.Config;
 
 namespace MinimalApi.Extensions;
 
@@ -11,10 +12,10 @@ internal static class ServiceCollectionExtensions
         // by def we use a default azure credential
         var s_azureCredential = new DefaultAzureCredential();
 
-        if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == Environments.Development)
+        if (Environment.GetEnvironmentVariable(ConfigKeys.ASPNETCORE_ENVIRONMENT) == Environments.Development)
         {
-            var azureKeyVaultEndpoint = builder.Configuration["AZURE_KEY_VAULT_ENDPOINT"];
-            var tenantId = builder.Configuration["AZURE_TENANT_ID"];
+            var azureKeyVaultEndpoint = builder.Configuration[ConfigKeys.AZURE_KEY_VAULT_ENDPOINT];
+            var tenantId = builder.Configuration[ConfigKeys.AZURE_TENANT_ID];
 
             // on dev scenarios, we use the info from the appsettings.development.json
             var da = new DefaultAzureCredentialOptions
@@ -27,7 +28,7 @@ internal static class ServiceCollectionExtensions
         builder.Services.AddSingleton<BlobServiceClient>(sp =>
         {
             var config = sp.GetRequiredService<IConfiguration>();
-            var azureStorageAccountEndpoint = config["AzureStorageAccountEndpoint"];
+            var azureStorageAccountEndpoint = config[ConfigKeys.AzureStorageAccountEndpoint];
             ArgumentNullException.ThrowIfNullOrEmpty(azureStorageAccountEndpoint);
 
             var blobServiceClient = new BlobServiceClient(
@@ -39,17 +40,17 @@ internal static class ServiceCollectionExtensions
         builder.Services.AddSingleton<BlobContainerClient>(sp =>
         {
             var config = sp.GetRequiredService<IConfiguration>();
-            var azureStorageContainer = config["AzureStorageContainer"];
+            var azureStorageContainer = config[ConfigKeys.AzureStorageContainer];
             return sp.GetRequiredService<BlobServiceClient>().GetBlobContainerClient(azureStorageContainer);
         });
 
         builder.Services.AddSingleton<ISearchService, AzureSearchService>(sp =>
         {
             var config = sp.GetRequiredService<IConfiguration>();
-            var azureSearchServiceEndpoint = config["AzureSearchServiceEndpoint"];
+            var azureSearchServiceEndpoint = config[ConfigKeys.AzureSearchServiceEndpoint];
             ArgumentNullException.ThrowIfNullOrEmpty(azureSearchServiceEndpoint);
 
-            var azureSearchIndex = config["AzureSearchIndex"];
+            var azureSearchIndex = config[ConfigKeys.AzureSearchIndex];
             ArgumentNullException.ThrowIfNullOrEmpty(azureSearchIndex);
 
             var searchClient = new SearchClient(
@@ -61,7 +62,7 @@ internal static class ServiceCollectionExtensions
         builder.Services.AddSingleton<DocumentAnalysisClient>(sp =>
         {
             var config = sp.GetRequiredService<IConfiguration>();
-            var azureOpenAiServiceEndpoint = config["AzureOpenAiServiceEndpoint"] ?? throw new ArgumentNullException();
+            var azureOpenAiServiceEndpoint = config[ConfigKeys.AzureOpenAiServiceEndpoint] ?? throw new ArgumentNullException();
 
             var documentAnalysisClient = new DocumentAnalysisClient(
                 new Uri(azureOpenAiServiceEndpoint), s_azureCredential);
@@ -71,10 +72,10 @@ internal static class ServiceCollectionExtensions
         builder.Services.AddSingleton<OpenAIClient>(sp =>
         {
             var config = sp.GetRequiredService<IConfiguration>();
-            var useAOAI = config["UseAOAI"] == "true";
-            if (useAOAI)
+            var use_AOAI = config[ConfigKeys.USE_AOAI] == "true";
+            if (use_AOAI)
             {
-                var azureOpenAiServiceEndpoint = config["AzureOpenAiServiceEndpoint"];
+                var azureOpenAiServiceEndpoint = config[ConfigKeys.AzureOpenAiServiceEndpoint];
                 ArgumentNullException.ThrowIfNullOrEmpty(azureOpenAiServiceEndpoint);
 
                 var openAIClient = new AzureOpenAIClient(new Uri(azureOpenAiServiceEndpoint), s_azureCredential);
@@ -83,7 +84,7 @@ internal static class ServiceCollectionExtensions
             }
             else
             {
-                var openAIApiKey = config["OpenAIApiKey"];
+                var openAIApiKey = config[ConfigKeys.OpenAIApiKey];
                 ArgumentNullException.ThrowIfNullOrEmpty(openAIApiKey);
 
                 var openAIClient = new OpenAIClient(openAIApiKey);
@@ -95,12 +96,12 @@ internal static class ServiceCollectionExtensions
         builder.Services.AddSingleton<ReadRetrieveReadChatService>(sp =>
         {
             var config = sp.GetRequiredService<IConfiguration>();
-            var useVision = config["UseVision"] == "true";
+            var useVision = config[ConfigKeys.UseVision] == "true";
             var openAIClient = sp.GetRequiredService<OpenAIClient>();
             var searchClient = sp.GetRequiredService<ISearchService>();
             if (useVision)
             {
-                var azureComputerVisionServiceEndpoint = config["AzureComputerVisionServiceEndpoint"];
+                var azureComputerVisionServiceEndpoint = config[ConfigKeys.AzureComputerVisionServiceEndpoint];
                 ArgumentNullException.ThrowIfNullOrEmpty(azureComputerVisionServiceEndpoint);
                 var httpClient = sp.GetRequiredService<IHttpClientFactory>().CreateClient();
 

@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
+using Shared.Config;
+
 namespace EmbedFunctions.Services;
 
 public sealed class EmbeddingAggregateService(
@@ -63,7 +65,7 @@ public sealed class EmbeddingAggregateService(
         }
     }
 
-    private static EmbeddingType GetEmbeddingType() => Environment.GetEnvironmentVariable("EMBEDDING_TYPE") is string type &&
+    private static EmbeddingType GetEmbeddingType() => Environment.GetEnvironmentVariable(ConfigKeys.EMBEDDING_TYPE) is string type &&
             Enum.TryParse<EmbeddingType>(type, out EmbeddingType embeddingType)
             ? embeddingType
             : EmbeddingType.AzureSearch;

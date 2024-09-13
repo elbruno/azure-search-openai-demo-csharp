@@ -2,6 +2,7 @@
 
 using MudBlazor.Utilities;
 using OpenAI;
+using Shared.Config;
 
 namespace MinimalApi.Extensions;
 
@@ -53,7 +54,7 @@ internal static class WebApplicationExtensions
                         You will always reply with a Markdown formatted response.
                         """;
 
-        var deploymentId = config["AZURE_OPENAI_CHATGPT_DEPLOYMENT"];
+        var deploymentId = config[ConfigKeys.AZURE_OPENAI_CHATGPT_DEPLOYMENT];
 
         // changes triggered using the latest version of Semantic Kernel
         var chatClient = client.GetChatClient(deploymentId);
@@ -67,20 +68,6 @@ internal static class WebApplicationExtensions
         };
 
         var response = chatClient.CompleteChatStreamingAsync(messages);
-
-        // TODO: remove original code
-        //var response = await client.GetChatCompletionsStreamingAsync(
-        //    new ChatCompletionsOptions
-        //    {
-        //        DeploymentName = deploymentId,
-        //        Messages =
-        //        {
-        //            new ChatRequestSystemMessage(systemMessage),
-        //            new ChatRequestUserMessage("What's your name?"),
-        //            new ChatRequestAssistantMessage("Hi, my name is **Blazor 📎 Clippy**! Nice to meet you."),
-        //            new ChatRequestUserMessage(prompt.Prompt)
-        //        }
-        //    }, cancellationToken);
 
         await foreach (var choice in response.WithCancellation(cancellationToken))
         {
@@ -178,16 +165,6 @@ internal static class WebApplicationExtensions
 
         var imageUrls = result.Value.Select(i => i.ImageUri).ToList();
         var response = new ImageResponse(result.Value.Created, imageUrls);
-
-        // TODO: remove original code
-        //var result = await client.GetImageGenerationsAsync(new ImageGenerationOptions
-        //{
-        //    Prompt = prompt.Prompt,
-        //    DeploymentName = ""
-        //},
-        //cancellationToken);
-        //var imageUrls = result.Value.Data.Select(i => i.Url).ToList();
-        //var response = new ImageResponse(result.Value.Created, imageUrls);
 
         return TypedResults.Ok(response);
     }

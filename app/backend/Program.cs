@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
 using Microsoft.AspNetCore.Antiforgery;
+using Shared.Config;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,23 +27,23 @@ else
 
     builder.Services.AddStackExchangeRedisCache(options =>
     {
-        var name = builder.Configuration["AzureRedisCacheName"] +
+        var name = builder.Configuration[Shared.Config.ConfigKeys.AzureRedisCacheName ] +
             ".redis.cache.windows.net";
-        var key = builder.Configuration["AzureRedisCachePrimaryKey"];
+        var key = builder.Configuration[Shared.Config.ConfigKeys.AzureRedisCachePrimaryKey];
         var ssl = "true";
 
 
-        if (GetEnvVar("REDIS_HOST") is string redisHost)
+        if (GetEnvVar(ConfigKeys.REDIS_HOST) is string redisHost)
         {
-            name = $"{redisHost}:{GetEnvVar("REDIS_PORT")}";
-            key = GetEnvVar("REDIS_PASSWORD");
+            name = $"{redisHost}:{GetEnvVar(ConfigKeys.REDIS_PORT)}";
+            key = GetEnvVar(ConfigKeys.REDIS_PASSWORD);
             ssl = "false";
         }
 
-        if (GetEnvVar("AZURE_REDIS_HOST") is string azureRedisHost)
+        if (GetEnvVar(ConfigKeys.AZURE_REDIS_HOST) is string azureRedisHost)
         {
-            name = $"{azureRedisHost}:{GetEnvVar("AZURE_REDIS_PORT")}";
-            key = GetEnvVar("AZURE_REDIS_PASSWORD");
+            name = $"{azureRedisHost}:{GetEnvVar(ConfigKeys.AZURE_REDIS_PORT)}";
+            key = GetEnvVar(Shared.Config.ConfigKeys.AZURE_REDIS_PASSWORD);
             ssl = "false";
         }
 
@@ -53,7 +54,7 @@ else
     });
 
     // set application telemetry
-    if (GetEnvVar("APPLICATIONINSIGHTS_CONNECTION_STRING") is string appInsightsConnectionString && !string.IsNullOrEmpty(appInsightsConnectionString))
+    if (GetEnvVar(ConfigKeys.APPLICATIONINSIGHTS_CONNECTION_STRING) is string appInsightsConnectionString && !string.IsNullOrEmpty(appInsightsConnectionString))
     {
         builder.Services.AddApplicationInsightsTelemetry((option) =>
         {

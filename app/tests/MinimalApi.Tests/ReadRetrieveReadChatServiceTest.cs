@@ -15,6 +15,7 @@ using Microsoft.Extensions.Configuration;
 using MinimalApi.Services;
 using NSubstitute;
 using OpenAI;
+using Shared.Config;
 using Shared.Models;
 
 namespace MinimalApi.Tests;
@@ -40,12 +41,12 @@ public class ReadRetrieveReadChatServiceTest
         var openAIChatGptDeployment = Environment.GetEnvironmentVariable("AZURE_OPENAI_CHATGPT_DEPLOYMENT") ?? throw new InvalidOperationException();
 
         var configuration = Substitute.For<IConfiguration>();
-        configuration["AzureOpenAiChatGptDeployment"].Returns(openAIChatGptDeployment);
-        configuration["AzureOpenAiEmbeddingDeployment"].Returns(openAiEmbeddingDeployment);
-        configuration["AzureOpenAiServiceEndpoint"].Returns(openAIEndpoint);
-        configuration["AzureStorageAccountEndpoint"].Returns("https://northwindhealth.blob.core.windows.net/");
-        configuration["AzureStorageContainer"].Returns("northwindhealth");
-        configuration["UseAOAI"].Returns("true");
+        configuration[ConfigKeys.AzureOpenAiChatGptDeployment].Returns(openAIChatGptDeployment);
+        configuration[ConfigKeys.AzureOpenAiEmbeddingDeployment].Returns(openAiEmbeddingDeployment);
+        configuration[ConfigKeys.AzureOpenAiServiceEndpoint].Returns(openAIEndpoint);
+        configuration[ConfigKeys.AzureStorageAccountEndpoint].Returns("https://northwindhealth.blob.core.windows.net/");
+        configuration[ConfigKeys.AzureStorageContainer].Returns("northwindhealth");
+        configuration[ConfigKeys.USE_AOAI].Returns("true");
 
         var chatService = new ReadRetrieveReadChatService(documentSearchService, openAIClient, configuration);
 
@@ -95,11 +96,11 @@ public class ReadRetrieveReadChatServiceTest
         var azureComputerVisionService = new AzureComputerVisionService(httpClient, azureComputerVisionEndpoint, azureCredential);
 
         var configuration = Substitute.For<IConfiguration>();
-        configuration["UseAOAI"].Returns("false");
-        configuration["OpenAiChatGptDeployment"].Returns("gpt-4-vision-preview");
-        configuration["OpenAiEmbeddingDeployment"].Returns("text-embedding-ada-002");
-        configuration["AzureStorageAccountEndpoint"].Returns("https://northwindhealth.blob.core.windows.net/");
-        configuration["AzureStorageContainer"].Returns("northwindhealth");
+        configuration[ConfigKeys.USE_AOAI].Returns("false");
+        configuration[ConfigKeys.OpenAiChatGptDeployment].Returns("gpt-4-vision-preview");
+        configuration[ConfigKeys.OpenAiEmbeddingDeployment].Returns("text-embedding-ada-002");
+        configuration[ConfigKeys.AzureStorageAccountEndpoint].Returns("https://northwindhealth.blob.core.windows.net/");
+        configuration[ConfigKeys.AzureStorageContainer].Returns("northwindhealth");
 
         var chatService = new ReadRetrieveReadChatService(
             azureSearchService,

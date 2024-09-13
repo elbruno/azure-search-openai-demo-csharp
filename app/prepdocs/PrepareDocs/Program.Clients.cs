@@ -2,6 +2,7 @@
 
 using System.ClientModel;
 using OpenAI;
+using Shared.Config;
 
 internal static partial class Program
 {
@@ -169,11 +170,11 @@ internal static partial class Program
        {
            if (s_openAIClient is null)
            {
-               var useAOAI = Environment.GetEnvironmentVariable("USE_AOAI") == "true";
-               if (!useAOAI)
+               var use_AOAI = Environment.GetEnvironmentVariable(ConfigKeys.USE_AOAI) == "true";
+               if (!use_AOAI)
                {
-                     var openAIApiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
-                     Console.WriteLine("useAOAI value is: " + useAOAI.ToString());
+                     var openAIApiKey = Environment.GetEnvironmentVariable(ConfigKeys.OPENAI_API_KEY);
+                     Console.WriteLine("use_AOAI value is: " + use_AOAI.ToString());
                      ArgumentNullException.ThrowIfNullOrEmpty(openAIApiKey);
                      s_openAIClient = new OpenAIClient(openAIApiKey);
                }
@@ -185,11 +186,6 @@ internal static partial class Program
                    s_openAIClient = new AzureOpenAIClient(
                        new Uri(endpoint),
                        new DefaultAzureCredential());
-
-                   // TODO: remove original code
-                   //s_openAIClient = new OpenAIClient(
-                   //    new Uri(endpoint),
-                   //    DefaultCredential);
                }
            }
            await Task.CompletedTask;

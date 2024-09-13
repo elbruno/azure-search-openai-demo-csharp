@@ -456,10 +456,6 @@ public sealed partial class AzureSearchEmbedService(
             var embeddings = await client.GenerateEmbeddingsAsync([section.Content.Replace('\r', ' ')]);
             var embedding = embeddings.Value.FirstOrDefault()?.Vector.ToArray() ?? [];
 
-            // TODO: remove original code
-            //var embeddings = await openAIClient.GetEmbeddingsAsync(new Azure.AI.OpenAI.EmbeddingsOptions(embeddingModelName, [section.Content.Replace('\r', ' ')]));
-            // var embedding = embeddings.Value.Data.FirstOrDefault()?.Embedding.ToArray() ?? [];
-
             batch.Actions.Add(new IndexDocumentsAction<SearchDocument>(
                 IndexActionType.MergeOrUpload,
                 new SearchDocument

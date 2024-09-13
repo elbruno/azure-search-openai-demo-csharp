@@ -5,6 +5,7 @@ using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
 using Microsoft.SemanticKernel.Embeddings;
 using OpenAI;
+using Shared.Config;
 
 namespace MinimalApi.Services;
 #pragma warning disable SKEXP0011 // Mark members as static
@@ -27,24 +28,24 @@ public class ReadRetrieveReadChatService
         _searchClient = searchClient;
         var kernelBuilder = Kernel.CreateBuilder();
 
-        if (configuration["UseAOAI"] == "false")
+        if (configuration[ConfigKeys.USE_AOAI] == "false")
         {
-            var deployment = configuration["OpenAiChatGptDeployment"];
+            var deployment = configuration[ConfigKeys.OpenAiChatGptDeployment];
             ArgumentNullException.ThrowIfNullOrWhiteSpace(deployment);
             kernelBuilder = kernelBuilder.AddOpenAIChatCompletion(deployment, client);
 
-            var embeddingModelName = configuration["OpenAiEmbeddingDeployment"];
+            var embeddingModelName = configuration[ConfigKeys.OpenAiEmbeddingDeployment];
             ArgumentNullException.ThrowIfNullOrWhiteSpace(embeddingModelName);
             kernelBuilder = kernelBuilder.AddOpenAITextEmbeddingGeneration(embeddingModelName, client);
         }
         else
         {
-            var deployedModelName = configuration["AzureOpenAiChatGptDeployment"];
+            var deployedModelName = configuration[ConfigKeys.AzureOpenAiChatGptDeployment];
             ArgumentNullException.ThrowIfNullOrWhiteSpace(deployedModelName);
-            var embeddingModelName = configuration["AzureOpenAiEmbeddingDeployment"];
+            var embeddingModelName = configuration[ConfigKeys.AzureOpenAiEmbeddingDeployment];
             if (!string.IsNullOrEmpty(embeddingModelName))
             {
-                var endpoint = configuration["AzureOpenAiServiceEndpoint"];
+                var endpoint = configuration[ConfigKeys.AzureOpenAiServiceEndpoint];
                 ArgumentNullException.ThrowIfNullOrWhiteSpace(endpoint);
 
                 kernelBuilder = kernelBuilder.AddAzureOpenAITextEmbeddingGeneration(embeddingModelName, endpoint, tokenCredential ?? new DefaultAzureCredential());

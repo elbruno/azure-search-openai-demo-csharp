@@ -2,6 +2,7 @@
 
 using Azure.AI.OpenAI;
 using OpenAI;
+using Shared.Config;
 
 var host = new HostBuilder()
     .ConfigureServices(services =>
@@ -18,28 +19,28 @@ var host = new HostBuilder()
         services.AddAzureClients(builder =>
         {
             builder.AddDocumentAnalysisClient(
-                GetUriFromEnvironment("AZURE_FORMRECOGNIZER_SERVICE_ENDPOINT"));
+                GetUriFromEnvironment(ConfigKeys.AZURE_FORMRECOGNIZER_SERVICE_ENDPOINT));
         });
 
         services.AddSingleton<SearchClient>(_ =>
         {
             return new SearchClient(
-                GetUriFromEnvironment("AZURE_SEARCH_SERVICE_ENDPOINT"),
-                Environment.GetEnvironmentVariable("AZURE_SEARCH_INDEX"),
+                GetUriFromEnvironment(ConfigKeys.AZURE_SEARCH_SERVICE_ENDPOINT),
+                Environment.GetEnvironmentVariable(ConfigKeys.AZURE_SEARCH_INDEX),
                 credential);
         });
 
         services.AddSingleton<SearchIndexClient>(_ =>
         {
             return new SearchIndexClient(
-                GetUriFromEnvironment("AZURE_SEARCH_SERVICE_ENDPOINT"),
+                GetUriFromEnvironment(ConfigKeys.AZURE_SEARCH_SERVICE_ENDPOINT),
                 credential);
         });
 
         services.AddSingleton<BlobContainerClient>(_ =>
         {
             var blobServiceClient = new BlobServiceClient(
-                GetUriFromEnvironment("AZURE_STORAGE_BLOB_ENDPOINT"),
+                GetUriFromEnvironment(ConfigKeys.AZURE_STORAGE_BLOB_ENDPOINT),
                 credential);
 
             var containerClient = blobServiceClient.GetBlobContainerClient("corpus");
@@ -52,7 +53,7 @@ var host = new HostBuilder()
         services.AddSingleton<BlobServiceClient>(_ =>
         {
             return new BlobServiceClient(
-                GetUriFromEnvironment("AZURE_STORAGE_BLOB_ENDPOINT"), credential);
+                GetUriFromEnvironment(ConfigKeys.AZURE_STORAGE_BLOB_ENDPOINT), credential);
         });
 
         services.AddSingleton<EmbedServiceFactory>();
@@ -60,23 +61,23 @@ var host = new HostBuilder()
 
         services.AddSingleton<IEmbedService, AzureSearchEmbedService>(provider =>
         {
-            var searchIndexName = Environment.GetEnvironmentVariable("AZURE_SEARCH_INDEX") ?? throw new ArgumentNullException("AZURE_SEARCH_INDEX is null");
-            var useAOAI = Environment.GetEnvironmentVariable("USE_AOAI")?.ToLower() == "true";
-            var useVision = Environment.GetEnvironmentVariable("USE_VISION")?.ToLower() == "true";
+            var searchIndexName = Environment.GetEnvironmentVariable(ConfigKeys.AZURE_SEARCH_INDEX) ?? throw new ArgumentNullException("AZURE_SEARCH_INDEX is null");
+            var use_AOAI = Environment.GetEnvironmentVariable(ConfigKeys.USE_AOAI)?.ToLower() == "true";
+            var useVision = Environment.GetEnvironmentVariable(ConfigKeys.USE_VISION)?.ToLower() == "true";
 
             OpenAIClient? openAIClient = null;
             string? embeddingModelName = null;
 
-            if (useAOAI)
+            if (use_AOAI)
             {
-                var openaiEndPoint = Environment.GetEnvironmentVariable("AZURE_OPENAI_ENDPOINT") ?? throw new ArgumentNullException("AZURE_OPENAI_ENDPOINT is null");
-                embeddingModelName = Environment.GetEnvironmentVariable("AZURE_OPENAI_EMBEDDING_DEPLOYMENT") ?? throw new ArgumentNullException("AZURE_OPENAI_EMBEDDING_DEPLOYMENT is null");
+                var openaiEndPoint = Environment.GetEnvironmentVariable(ConfigKeys.AZURE_OPENAI_ENDPOINT) ?? throw new ArgumentNullException("AZURE_OPENAI_ENDPOINT is null");
+                embeddingModelName = Environment.GetEnvironmentVariable(ConfigKeys.AZURE_OPENAI_EMBEDDING_DEPLOYMENT) ?? throw new ArgumentNullException("AZURE_OPENAI_EMBEDDING_DEPLOYMENT is null");
                 openAIClient = new AzureOpenAIClient(new Uri(openaiEndPoint), new DefaultAzureCredential());
             }
             else
             {
-                embeddingModelName = Environment.GetEnvironmentVariable("OPENAI_EMBEDDING_DEPLOYMENT") ?? throw new ArgumentNullException("OPENAI_EMBEDDING_DEPLOYMENT is null");
-                var openaiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY") ?? throw new ArgumentNullException("OPENAI_API_KEY is null");
+                embeddingModelName = Environment.GetEnvironmentVariable(ConfigKeys.OPENAI_EMBEDDING_DEPLOYMENT) ?? throw new ArgumentNullException("OPENAI_EMBEDDING_DEPLOYMENT is null");
+                var openaiKey = Environment.GetEnvironmentVariable(ConfigKeys.OPENAI_API_KEY) ?? throw new ArgumentNullException("OPENAI_API_KEY is null");
                 openAIClient = new OpenAIClient(openaiKey);
             }
 
@@ -88,7 +89,7 @@ var host = new HostBuilder()
 
             if (useVision)
             {
-                var visionEndpoint = Environment.GetEnvironmentVariable("AZURE_COMPUTER_VISION_ENDPOINT") ?? throw new ArgumentNullException("AZURE_COMPUTER_VISION_ENDPOINT is null");
+                var visionEndpoint = Environment.GetEnvironmentVariable(ConfigKeys.AZURE_COMPUTER_VISION_ENDPOINT) ?? throw new ArgumentNullException("AZURE_COMPUTER_VISION_ENDPOINT is null");
                 var httpClient = new HttpClient();
                 var visionClient = new AzureComputerVisionService(httpClient, visionEndpoint, new DefaultAzureCredential());
 
