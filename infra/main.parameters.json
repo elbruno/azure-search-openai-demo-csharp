@@ -87,7 +87,7 @@
       "value": "${OPENAI_API_KEY}"
     },
     "useAOAI": {
-      "value": "${USE_AOAI=true}"
+      "value": "${USEAOAI=true}"
     },
     "computerVisionServiceName": {
       "value": "${AZURE_COMPUTERVISION_SERVICE_NAME}"

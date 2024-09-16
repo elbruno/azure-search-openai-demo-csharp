@@ -32,8 +32,8 @@ if [ -z "$AZD_PREPDOCS_RAN" ] || [ "$AZD_PREPDOCS_RAN" = "false" ]; then
         args="$args --computervisionendpoint $AZURE_COMPUTERVISION_SERVICE_ENDPOINT"
     fi
 
-    # if USE_AOAI is true, add --openaiendpoint "$AZURE_OPENAI_ENDPOINT" to the command above
-    if [ "$USE_AOAI" = "true" ]; then
+    # if USEAOAI is true, add --openaiendpoint "$AZURE_OPENAI_ENDPOINT" to the command above
+    if [ "$USEAOAI" = "true" ]; then
         echo "use azure openai"
         args="$args --openaiendpoint $AZURE_OPENAI_ENDPOINT"
         args="$args --embeddingmodel $AZURE_OPENAI_EMBEDDING_DEPLOYMENT"

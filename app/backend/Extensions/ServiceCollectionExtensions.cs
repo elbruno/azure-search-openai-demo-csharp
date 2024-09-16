@@ -72,8 +72,8 @@ internal static class ServiceCollectionExtensions
         builder.Services.AddSingleton<OpenAIClient>(sp =>
         {
             var config = sp.GetRequiredService<IConfiguration>();
-            var use_AOAI = config[ConfigKeys.USE_AOAI] == "true";
-            if (use_AOAI)
+            var USEAOAI = config[ConfigKeys.USEAOAI] == "true";
+            if (USEAOAI)
             {
                 var azureOpenAiServiceEndpoint = config[ConfigKeys.AzureOpenAiServiceEndpoint];
                 ArgumentNullException.ThrowIfNullOrEmpty(azureOpenAiServiceEndpoint);

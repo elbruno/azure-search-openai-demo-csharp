@@ -380,7 +380,7 @@ module function './app/function.bicep' = {
       OPENAI_EMBEDDING_DEPLOYMENT: useAOAI ? '' : openAiEmbeddingDeployment
       AZURE_OPENAI_ENDPOINT: useAOAI ? azureOpenAi.outputs.endpoint : ''
       USE_VISION: string(useVision)
-      USE_AOAI: string(useAOAI)
+      USEAOAI: string(useAOAI)
       AZURE_COMPUTER_VISION_ENDPOINT: useVision ? computerVision.outputs.endpoint : ''
       OPENAI_API_KEY: useAOAI ? '' : openAIApiKey
     }
@@ -777,7 +777,7 @@ output AZURE_TENANT_ID string = tenant().tenantId
 output SERVICE_WEB_IDENTITY_NAME string = web.outputs.SERVICE_WEB_IDENTITY_NAME
 output SERVICE_WEB_NAME string = web.outputs.SERVICE_WEB_NAME
 output SERVICE_FUNCTION_IDENTITY_PRINCIPAL_ID string = function.outputs.SERVICE_FUNCTION_IDENTITY_PRINCIPAL_ID
-output USE_AOAI bool = useAOAI
+output USEAOAI bool = useAOAI
 output USE_VISION bool = useVision
 output OPENAI_EMBEDDING_DEPLOYMENT string = openAiEmbeddingDeployment
 output AZURE_OPENAI_CHATGPT_MODEL_VERSION string = azureOpenAIChatGptModelVersion

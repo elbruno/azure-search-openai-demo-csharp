@@ -62,13 +62,13 @@ var host = new HostBuilder()
         services.AddSingleton<IEmbedService, AzureSearchEmbedService>(provider =>
         {
             var searchIndexName = Environment.GetEnvironmentVariable(ConfigKeys.AZURE_SEARCH_INDEX) ?? throw new ArgumentNullException("AZURE_SEARCH_INDEX is null");
-            var use_AOAI = Environment.GetEnvironmentVariable(ConfigKeys.USE_AOAI)?.ToLower() == "true";
+            var USEAOAI = Environment.GetEnvironmentVariable(ConfigKeys.USEAOAI)?.ToLower() == "true";
             var useVision = Environment.GetEnvironmentVariable(ConfigKeys.USE_VISION)?.ToLower() == "true";
 
             OpenAIClient? openAIClient = null;
             string? embeddingModelName = null;
 
-            if (use_AOAI)
+            if (USEAOAI)
             {
                 var openaiEndPoint = Environment.GetEnvironmentVariable(ConfigKeys.AZURE_OPENAI_ENDPOINT) ?? throw new ArgumentNullException("AZURE_OPENAI_ENDPOINT is null");
                 embeddingModelName = Environment.GetEnvironmentVariable(ConfigKeys.AZURE_OPENAI_EMBEDDING_DEPLOYMENT) ?? throw new ArgumentNullException("AZURE_OPENAI_EMBEDDING_DEPLOYMENT is null");

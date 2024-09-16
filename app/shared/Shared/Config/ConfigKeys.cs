@@ -25,7 +25,7 @@ namespace Shared.Config
         public const string AzureSearchServiceEndpoint = "AzureSearchServiceEndpoint";
         public const string AzureSearchIndex = "AzureSearchIndex";
         public const string AzureOpenAiServiceEndpoint = "AzureOpenAiServiceEndpoint";
-        public const string USE_AOAI = "USE_AOAI";
+        public const string USEAOAI = "USEAOAI";
         public const string OpenAIApiKey = "OpenAIApiKey";
         public const string UseVision = "UseVision";
         public const string AzureComputerVisionServiceEndpoint = "AzureComputerVisionServiceEndpoint";

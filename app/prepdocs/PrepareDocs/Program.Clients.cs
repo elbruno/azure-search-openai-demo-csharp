@@ -170,11 +170,11 @@ internal static partial class Program
        {
            if (s_openAIClient is null)
            {
-               var use_AOAI = Environment.GetEnvironmentVariable(ConfigKeys.USE_AOAI) == "true";
-               if (!use_AOAI)
+               var USEAOAI = Environment.GetEnvironmentVariable(ConfigKeys.USEAOAI) == "true";
+               if (!USEAOAI)
                {
                      var openAIApiKey = Environment.GetEnvironmentVariable(ConfigKeys.OPENAI_API_KEY);
-                     Console.WriteLine("use_AOAI value is: " + use_AOAI.ToString());
+                     Console.WriteLine("USEAOAI value is: " + USEAOAI.ToString());
                      ArgumentNullException.ThrowIfNullOrEmpty(openAIApiKey);
                      s_openAIClient = new OpenAIClient(openAIApiKey);
                }

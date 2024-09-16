@@ -308,7 +308,7 @@ To enable GPT-4V support with Azure OpenAI Service, run the following commands:
 
 ```bash
 azd env set USE_VISION true
-azd env set USE_AOAI true
+azd env set USEAOAI true
 azd env set AZURE_OPENAI_CHATGPT_MODEL_NAME gpt-4o-mini
 azd env set AZURE_OPENAI_RESOURCE_LOCATION eastus # Please check the gpt model availability for more details.
 azd up
@@ -318,7 +318,7 @@ To enable vision support with OpenAI, run the following commands:
 
 ```bash
 azd env set USE_VISION true
-azd env set USE_AOAI false
+azd env set USEAOAI false
 azd env set OPENAI_CHATGPT_DEPLOYMENT gpt-4o
 azd up
 ```

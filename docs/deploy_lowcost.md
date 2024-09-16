@@ -53,7 +53,7 @@ However, if your goal is to minimize costs while prototyping your application, f
     You can create a free account in OpenAI and [request a key to use OpenAI models](https://platform.openai.com/docs/quickstart/create-and-export-an-api-key). Once you have this, you can disable the use of Azure OpenAI Services, and use OpenAI APIs.
 
     ```shell
-    azd env set USE_AOAI false
+    azd env set USEAOAI false
     azd env set USE_VISION false
     azd env set OPENAI_CHATGPT_DEPLOYMENT gpt-4o-mini
     azd env set OPENAI_API_KEY <your openai.com key goes here>    
